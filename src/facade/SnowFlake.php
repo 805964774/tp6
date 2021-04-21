@@ -26,9 +26,11 @@ class SnowFlake extends Facade
      * 创建Facade实例
      * @static
      * @access protected
+     * @param string $class
+     * @param array $args
      * @return object
      */
-    protected static function createFacade() {
+    protected static function createFacade(string $class = '', array $args = [], bool $newInstance = false) {
         $class = static::getFacadeClass();
         $args = [
             Env::get('work_id', 1),
