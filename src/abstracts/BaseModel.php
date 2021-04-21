@@ -13,7 +13,7 @@ use think\db\exception\ModelNotFoundException;
 use think\Model;
 use think\Paginator;
 
-class BaseModel
+abstract class BaseModel extends Model
 {
     protected $getListField;
     protected $addAllowField;
