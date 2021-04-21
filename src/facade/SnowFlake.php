@@ -12,7 +12,7 @@ use think\facade\Env;
  * @package app\common\facade
  * @method static nextId() 获取新的id
  * @method static getCurrentId() 获取当前的id
- * @method static setCurrentId(int $id) 设置当前的id
+ * @method static setCurrentId(string $id) 设置当前的id
  */
 class SnowFlake extends Facade
 {
