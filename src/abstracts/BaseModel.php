@@ -90,7 +90,6 @@ abstract class BaseModel extends Model
      * @param $inputData
      * @param array $allowField
      * @return BaseModel
-     * @throws AppException
      */
     public function modifyOneData($where, $inputData, $allowField = []) {
         if (empty($allowField)) {
@@ -101,11 +100,7 @@ abstract class BaseModel extends Model
                 unset($inputData[$key]);
             }
         }
-        $res = $this->allowField($allowField)->where($where)->update($inputData);
-        if (false === $res) {
-            throw new AppException(ErrorNums::MODIFY_FAIL);
-        }
-        return $res;
+        return $this->allowField($allowField)->where($where)->update($inputData);
     }
 
     /**
