@@ -13,10 +13,10 @@ use think\helper\Str;
 use think\Request;
 
 /**
- * Class PoHo
- * @package ChengYi\guide
+ * Class PoPo
+ * @package ChengYi\abstracts
  */
-abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
+abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
 {
     private $data = [];
     protected $dataTypeMap = [];
