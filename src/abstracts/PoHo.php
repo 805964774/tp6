@@ -19,7 +19,7 @@ use think\Request;
 abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
 {
     private $data = [];
-    private $dataTypeMap = [];
+    protected $dataTypeMap = [];
     protected $validates = [];
     protected $autoValidate = true;
 
@@ -31,8 +31,8 @@ abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
             $propertySnakeName = Str::snake($property->getName());
             if ($property->isProtected() && isset($inputData[$propertySnakeName])) {
                 $propertyValue = $inputData[$propertySnakeName];
-                if (isset($this->dataTypeMap[$propertyValue])) {
-                    $type = $this->dataTypeMap[$propertyValue];
+                if (isset($this->dataTypeMap[$propertySnakeName])) {
+                    $type = $this->dataTypeMap[$propertySnakeName];
                     $propertyValue = $this->typeCast($propertyValue, $type);
                 }
                 $propertyName = $property->getName();
@@ -122,4 +122,3 @@ abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
         return $data;
     }
 }
-
