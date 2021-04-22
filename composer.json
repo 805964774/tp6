@@ -1,20 +1,21 @@
 {
-    "name": "chengyi/tp6",
-    "description": "基于tp6做一些微调",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "靳陆陆",
-            "email": "805964774@qq.com"
-        }
-    ],
-    "require": {
-        "topthink/framework": "^6.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "ChengYi\\": "src/"
-        }
+  "name": "chengyi/tp6",
+  "description": "基于tp6做一些微调",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "靳陆陆",
+      "email": "805964774@qq.com"
     }
+  ],
+  "require": {
+    "topthink/framework": "^6.0.0",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "ChengYi\\": "src/"
+    }
+  }
 }
