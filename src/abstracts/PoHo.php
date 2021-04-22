@@ -19,6 +19,7 @@ use think\Request;
 abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
 {
     private $data = [];
+    private $dataTypeMap = [];
     protected $validates = [];
     protected $autoValidate = true;
 
@@ -29,9 +30,14 @@ abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
         foreach ($properties as $property) {
             $propertySnakeName = Str::snake($property->getName());
             if ($property->isProtected() && isset($inputData[$propertySnakeName])) {
+                $propertyValue = $inputData[$propertySnakeName];
+                if (isset($this->dataTypeMap[$propertyValue])) {
+                    $type = $this->dataTypeMap[$propertyValue];
+                    $propertyValue = $this->typeCast($propertyValue, $type);
+                }
                 $propertyName = $property->getName();
-                $this->$propertyName = $inputData[$propertySnakeName];
-                $this->data[$propertySnakeName] = $inputData[$propertySnakeName];
+                $this->$propertyName = $propertyValue;
+                $this->data[$propertySnakeName] = $propertyValue;
             }
         }
         if (true == $this->autoValidate) {
@@ -77,6 +83,43 @@ abstract class PoHo implements ArrayAccess, JsonSerializable, Arrayable
 
     public function toArray(): array {
         return $this->data;
+    }
+
+    /**
+     * 强制类型转换
+     * @access public
+     * @param mixed $data
+     * @param string $type
+     * @return mixed
+     */
+    private function typeCast($data, string $type) {
+        switch (strtolower($type)) {
+            // 数组
+            case 'array':
+                $data = (array)$data;
+                break;
+            // 数字
+            case 'int':
+                $data = (int)$data;
+                break;
+            // 浮点
+            case 'float':
+                $data = (float)$data;
+                break;
+            // 布尔
+            case 'bool':
+                $data = (boolean)$data;
+                break;
+            // 字符串
+            case 'string':
+                if (is_scalar($data)) {
+                    $data = (string)$data;
+                } else {
+                    throw new \InvalidArgumentException('variable type error：' . gettype($data));
+                }
+                break;
+        }
+        return $data;
     }
 }
 
