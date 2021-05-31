@@ -77,7 +77,13 @@ abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
 
     public function validate() {
         foreach ($this->validates as $validate => $scene) {
-            validate($validate)->scene($scene)->check($this->data);
+            if (is_string($scene)) {
+                validate($validate)->scene($scene)->check($this->data);
+            } else if (is_array($scene)) {
+                foreach ($scene as $item) {
+                    validate($validate)->scene($item)->check($this->data);
+                }
+            }
         }
     }
 
