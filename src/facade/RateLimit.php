@@ -19,15 +19,16 @@ class RateLimit extends Facade
      * 创建Facade实例
      * @static
      * @access protected
-     * @param  string $class       类名或标识
-     * @param  array  $args        变量
-     * @param  bool   $newInstance 是否每次创建新的实例
+     * @param string $class 类名或标识
+     * @param array $args 变量
+     * @param bool $newInstance 是否每次创建新的实例
      * @return object
      */
-    protected static function createFacade(string $class = '', array $args = [], bool $newInstance = false)
-    {
+    protected static function createFacade(string $class = '', array $args = [], bool $newInstance = false) {
         $class = static::getFacadeClass();
-        $args = Config::get('rete_limit');
+        $args = [
+            Config::get('rete_limit')
+        ];
         $newInstance = false;
         if (static::$alwaysNewInstance) {
             $newInstance = true;
