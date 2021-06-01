@@ -10,6 +10,9 @@ use think\Request;
 use think\Response;
 use think\Session;
 
+/**
+ * 在原先框架的基础上，给对应的cookie加了httponly属性
+ */
 class SessionInit
 {
     /** @var App */

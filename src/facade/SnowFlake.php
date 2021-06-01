@@ -9,6 +9,7 @@ use think\facade\Env;
 
 /**
  * Class SnowFlake
+ * 多台机器的时候，需要在环境变量设置work_id，保证trace_id唯一
  * @package app\common\facade
  * @method static nextId() 获取新的id
  * @method static getCurrentId() 获取当前的id
@@ -24,11 +25,10 @@ class SnowFlake extends Facade
 
     /**
      * 创建Facade实例
-     * @static
-     * @access protected
      * @param string $class
      * @param array $args
-     * @return object
+     * @param bool $newInstance
+     * @return mixed|object|\think\DbManager
      */
     protected static function createFacade(string $class = '', array $args = [], bool $newInstance = false) {
         $class = static::getFacadeClass();

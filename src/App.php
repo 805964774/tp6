@@ -2,6 +2,12 @@
 
 namespace ChengYi;
 
+/**
+ * 框架不支持场景配置，继承重写getConfigPath
+ * 依赖config_scene环境变量，读取对应场景的配置，方便开发
+ * Class App
+ * @package ChengYi
+ */
 class App extends \think\App
 {
     /**

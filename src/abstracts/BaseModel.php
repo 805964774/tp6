@@ -4,8 +4,8 @@
 namespace ChengYi\abstracts;
 
 
-use app\common\constant\ErrorNums;
-use app\common\exception\AppException;
+use ChengYi\constant\ErrorNums;
+use ChengYi\exception\ModelException;
 use think\Collection;
 use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
@@ -28,7 +28,7 @@ abstract class BaseModel extends Model
      * @return Paginator
      * @throws DbException
      */
-    public function getList($pageNum = 10, $where = [], $order = []): Paginator {
+    public function getList(int $pageNum = 10, array $where = [], array $order = []): Paginator {
         return $this->field($this->getListField)->where($where)->order($order)->paginate($pageNum);
     }
 
@@ -41,7 +41,7 @@ abstract class BaseModel extends Model
      * @throws DbException
      * @throws ModelNotFoundException
      */
-    public function getAll($where, $field = []): Collection {
+    public function getAll($where, array $field = []): Collection {
         if (empty($field)) {
             $field = $this->getListField;
         }
@@ -53,9 +53,9 @@ abstract class BaseModel extends Model
      * @param $inputData
      * @param array $allowField
      * @return int
-     * @throws AppException
+     * @throws \ChengYi\exception\ModelException
      */
-    public function addOneData($inputData, $allowField = []): int {
+    public function addOneData($inputData, array $allowField = []): int {
         if (empty($allowField)) {
             $allowField = $this->addAllowField;
         }
@@ -66,7 +66,7 @@ abstract class BaseModel extends Model
         }
         $res = $this->allowField($allowField)->save($inputData);
         if (!$res) {
-            throw new AppException(ErrorNums::ADD_FAIL);
+            throw new ModelException(ErrorNums::ADD_FAIL);
         }
         $pk = $this->getPk();
         return $this->$pk;
@@ -78,7 +78,7 @@ abstract class BaseModel extends Model
      * @param array $field
      * @return array|Model
      */
-    public function read($id, $field = []) {
+    public function read($id, array $field = []) {
         $where['id'] = $id;
         $field = empty($field) ? $this->getDataField : $field;
         return $this->field($field)->where($where)->findOrFail();
@@ -89,9 +89,9 @@ abstract class BaseModel extends Model
      * @param $where
      * @param $inputData
      * @param array $allowField
-     * @return BaseModel
+     * @return \ChengYi\abstracts\BaseModel
      */
-    public function modifyOneData($where, $inputData, $allowField = []) {
+    public function modifyOneData($where, $inputData, array $allowField = []) {
         if (empty($allowField)) {
             $allowField = $this->editAllowField;
         }

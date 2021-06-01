@@ -33,7 +33,6 @@ class SnowFlake
         }
         //赋值
         $this->workId = $workId;
-
     }
 
     //生成一个ID
