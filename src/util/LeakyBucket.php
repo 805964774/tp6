@@ -109,11 +109,4 @@ class LeakyBucket
         }
         return self::$_instances[$scene];
     }
-
-    /**
-     * @throws \ChengYi\exception\ChengYiException
-     */
-    public static function __callStatic($method, array $params) {
-        return call_user_func_array([self::getInstance(), $method], $params);
-    }
 }

@@ -59,7 +59,7 @@ class Log implements LogHandlerInterface
         !is_dir($path) && mkdir($path, 0755, true);
 
         $info = [];
-        $traceId = SnowFlake::getCurrentId();
+        $traceId = SnowFlake::getInstance()->getCurrentId();
         // 日志信息封装
         $time = \DateTime::createFromFormat('0.u00 U', microtime())->setTimezone(new \DateTimeZone(date_default_timezone_get()))->format($this->config['time_format']);
         $runtime = number_format(microtime(true) - app()->getBeginTime(), 10, '.', '');
