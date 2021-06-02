@@ -4,7 +4,7 @@
 namespace ChengYi;
 
 
-use ChengYi\facade\SnowFlake;
+use ChengYi\util\SnowFlake;
 use think\App;
 use think\contract\LogHandlerInterface;
 

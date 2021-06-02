@@ -4,10 +4,21 @@
 namespace ChengYi\util;
 
 
+use think\facade\Env;
 use think\facade\Log;
 
+/**
+ * 多台机器的时候，需要在环境变量设置work_id，保证trace_id唯一
+ * Class SnowFlake
+ * @package ChengYi\util
+ */
 class SnowFlake
 {
+    /**
+     * @var SnowFlake
+     */
+    private static $_instance;
+
     const TWEPOCH = 1609430400000; // 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）
 
     //机器标识占的位数
@@ -25,7 +36,7 @@ class SnowFlake
     protected $currentId = 0;
 
 
-    function __construct($workId) {
+    private function __construct($workId) {
         //机器ID范围判断
         $maxWorkerId = -1 ^ (-1 << self::WORKERID_BITS);
         if ($workId > $maxWorkerId || $workId < 0) {
@@ -41,7 +52,7 @@ class SnowFlake
         $lastTimestamp = self::$lastTimestamp;
         //判断时钟是否正常
         if ($timestamp < $lastTimestamp) {
-            Log::warning("Clock moved backwards.  Refusing to generate id for " . ($lastTimestamp - $timestamp) . " milliseconds", );
+            Log::warning("Clock moved backwards.  Refusing to generate id for " . ($lastTimestamp - $timestamp) . " milliseconds",);
         }
         //生成唯一序列
         if ($lastTimestamp == $timestamp) {
@@ -60,7 +71,7 @@ class SnowFlake
         $workerIdShift = self::SEQUENCE_BITS;
         //组合3段数据返回: 时间戳.工作机器.序列
         $nextId = (($timestamp - self::TWEPOCH) << $timestampLeftShift) | ($this->workId << $workerIdShift) | self::$sequence;
-        $traceId = date('YmdHis') .'_'. $nextId;
+        $traceId = date('YmdHis') . '_' . $nextId;
         $this->currentId = $traceId;
         return $traceId;
     }
@@ -86,5 +97,24 @@ class SnowFlake
 
     public function setCurrentId($currentId) {
         $this->currentId = $currentId;
+    }
+
+    private function __clone() {
+    }
+
+    /**
+     * 获取实例
+     * @return \ChengYi\util\SnowFlake
+     */
+    public static function getInstance(): SnowFlake {
+        if (!(self::$_instance instanceof SnowFlake)) {
+            $param = Env::get('work_id', 1);
+            self::$_instance = new self($param);
+        }
+        return self::$_instance;
+    }
+
+    public static function __callStatic($method, array $params) {
+        return call_user_func_array([self::getInstance(), $method], $params);
     }
 }

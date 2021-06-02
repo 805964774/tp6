@@ -4,7 +4,11 @@
 namespace ChengYi\util;
 
 
+use ChengYi\constant\ErrorNums;
+use ChengYi\exception\ChengYiException;
+use ChengYi\exception\RateLimitException;
 use think\facade\Cache;
+use think\facade\Config;
 
 /**
  * 令牌桶限流
@@ -13,6 +17,12 @@ use think\facade\Cache;
  */
 class LeakyBucket
 {
+
+    /**
+     * @var array
+     */
+    private static $_instances;
+
     /**
      * @var mixed 令牌桶的容量
      */
@@ -24,19 +34,19 @@ class LeakyBucket
     private $incRate;
 
     /**
-     * @var mixed 获取token的速率，单位是s
+     * @var mixed 单次获取token的数量
      */
-    private $decRate;
+    private $decNum;
 
     /**
      * @var mixed 缓存失效时间
      */
     private $cacheExpire;
 
-    public function __construct($conf) {
+    private function __construct($conf) {
         $this->capacity = $conf['capacity'];
         $this->incRate = $conf['inc_rate'];
-        $this->decRate = $conf['dec_rate'];
+        $this->decNum = $conf['dec_num'];
         $this->cacheExpire = $conf['cache_expire'];
     }
 
@@ -54,32 +64,18 @@ class LeakyBucket
         // 添加完token后，获取最终的值，但是不能大于桶容量
         $tokenNum = min($lastTokenNum + $incTokenNum, $this->capacity);
         // 计算获取token的数量
-        $decTokenNum = $interval * $this->decRate;
         // 如果token数量小于获取的token，则不放行
-        if ($tokenNum < $decTokenNum) {
-            return false;
+        if ($tokenNum < $this->decNum || $tokenNum == 0) {
+            // 没有token了
+            throw new RateLimitException('too many request', ErrorNums::TOO_MANY_REQUEST);
         }
         // 计算放行之后的token
-        $tokenNum -= $decTokenNum;
+        $tokenNum -= $this->decNum;
         // 将当前的数据存入缓存，供下次使用
         $data['token_num'] = $tokenNum;
         $data['last_time'] = $curTime;
         Cache::set($key, $data, $this->getCacheExpire());
         return true;
-    }
-
-    /**
-     * 重置配置，应对一些特殊的限流
-     * return $this是为了方便链式调用
-     * @param $conf
-     * @return $this
-     */
-    public function resetConf($conf): LeakyBucket {
-        $this->capacity = $conf['capacity'];
-        $this->incRate = $conf['inc_rate'];
-        $this->decRate = $conf['dec_rate'];
-        $this->cacheExpire = $conf['cache_expire'];
-        return $this;
     }
 
     /**
@@ -89,5 +85,35 @@ class LeakyBucket
     private function getCacheExpire(): int {
         $randomMax = 60;
         return mt_rand(10, $randomMax) + $this->cacheExpire;
+    }
+
+    private function __clone() {
+    }
+
+    /**
+     * 获取实例
+     * @param string $scene
+     * @param array $config
+     * @return \ChengYi\util\LeakyBucket
+     * @throws \ChengYi\exception\ChengYiException
+     */
+    public static function getInstance(string $scene = 'default', array $config = []): LeakyBucket {
+        if (!(self::$_instances[$scene] instanceof LeakyBucket)) {
+            if ('default' != $scene && empty($config)) {
+                throw new ChengYiException('非默认场景，需要配置信息');
+            }
+            if (!empty($config)) {
+                $config = Config::get('rete_limit');
+            }
+            self::$_instances[$scene] = new self($config);
+        }
+        return self::$_instances[$scene];
+    }
+
+    /**
+     * @throws \ChengYi\exception\ChengYiException
+     */
+    public static function __callStatic($method, array $params) {
+        return call_user_func_array([self::getInstance(), $method], $params);
     }
 }
