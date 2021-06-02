@@ -98,11 +98,11 @@ class LeakyBucket
      * @throws \ChengYi\exception\ChengYiException
      */
     public static function getInstance(string $scene = 'default', array $config = []): LeakyBucket {
-        if (!(self::$_instances[$scene] instanceof LeakyBucket)) {
+        if (!isset(self::$_instances[$scene]) || !self::$_instances[$scene] instanceof LeakyBucket) {
             if ('default' != $scene && empty($config)) {
                 throw new ChengYiException('非默认场景，需要配置信息');
             }
-            if (!empty($config)) {
+            if (empty($config)) {
                 $config = Config::get('rete_limit');
             }
             self::$_instances[$scene] = new self($config);
