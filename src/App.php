@@ -23,6 +23,7 @@ class App extends \think\App
         if (is_dir($configPath)) {
             return $configPath;
         }
-        die(json_encode(['errno' => ErrorNums::DIRECTORY_NOT_EXISTS,'errmsg' => '场景配置不存在，scene：' . $scene]));
+        header("Content-type:application/json");
+        die(json_encode(['code' => ErrorNums::DIRECTORY_NOT_EXISTS, 'msg' => '[' . $scene . '] scene config not exist!']));
     }
 }
