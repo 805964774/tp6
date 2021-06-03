@@ -16,6 +16,6 @@ class ErrorNums
     const ADD_FAIL = 2;
     // 过多的请求
     const TOO_MANY_REQUEST = 3;
-    // method not exists
-    const METHOD_NOT_EXISTS = 4;
+    // 目录不存在
+    const DIRECTORY_NOT_EXISTS = 4;
 }
