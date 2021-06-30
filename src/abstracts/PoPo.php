@@ -23,8 +23,12 @@ abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
     protected $validates = [];
     protected $autoValidate = true;
 
-    public function __construct(Request $request) {
-        $inputData = $request->param();
+    public function __construct(Request $request, $param = []) {
+        if (empty($param)) {
+            $inputData = $request->param();
+        } else {
+            $inputData = $param;
+        }
         $class = new ReflectionClass($this);
         $properties = $class->getProperties(ReflectionProperty::IS_PROTECTED);
         foreach ($properties as $property) {
