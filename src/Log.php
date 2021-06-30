@@ -20,11 +20,11 @@ class Log implements LogHandlerInterface
         'single' => false,
         'file_size' => 2097152,
         'path' => '',
-        'apart_level' => [],
+        'apart_level' => ['error', 'warning', 'queue', 'crontab'],
         'max_files' => 0,
         'json' => false,
         'json_options' => JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES,
-        'format' => '[%s][%s] %s',
+        'format' => '[%s][%s][%s][%s][%s] %s',
     ];
 
     // 实例化并传入参数
