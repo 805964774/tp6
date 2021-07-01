@@ -24,6 +24,6 @@ class App extends \think\App
             return $configPath;
         }
         header("Content-type:application/json");
-        die(json_encode(['code' => ErrorNums::DIRECTORY_NOT_EXISTS, 'msg' => '[' . $scene . '] scene config not exist!']));
+        die(json_encode(['code' => ErrorNums::DIRECTORY_NOT_EXISTS, 'msg' => '[' . $scene . '] scene config directory not exist!']));
     }
 }

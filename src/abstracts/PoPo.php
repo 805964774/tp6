@@ -4,7 +4,6 @@
 namespace ChengYi\abstracts;
 
 
-use ArrayAccess;
 use JsonSerializable;
 use ReflectionClass;
 use ReflectionProperty;
@@ -16,7 +15,7 @@ use think\Request;
  * Class PoPo
  * @package ChengYi\abstracts
  */
-abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
+abstract class PoPo implements Arrayable
 {
     private $data = [];
     protected $dataTypeMap = [];
@@ -33,7 +32,7 @@ abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
         $properties = $class->getProperties(ReflectionProperty::IS_PROTECTED);
         foreach ($properties as $property) {
             $propertySnakeName = Str::snake($property->getName());
-            if ($property->isProtected() && isset($inputData[$propertySnakeName])) {
+            if ($property->isPrivate() && isset($inputData[$propertySnakeName])) {
                 $propertyValue = $inputData[$propertySnakeName];
                 if (isset($this->dataTypeMap[$propertySnakeName])) {
                     $type = $this->dataTypeMap[$propertySnakeName];
@@ -47,36 +46,6 @@ abstract class PoPo implements ArrayAccess, JsonSerializable, Arrayable
         if (true == $this->autoValidate) {
             $this->validate();
         }
-    }
-
-    public function __get($propertyName) {
-        return $this->$propertyName;
-    }
-
-    public function __set(string $propertyName, $propertyValue) {
-        $this->$propertyName = $propertyValue;
-        $this->data[Str::snake($propertyName)] = $propertyValue;
-    }
-
-    public function offsetExists($offset): bool {
-        return !is_null($this->__get(Str::camel($offset)));
-    }
-
-    public function offsetGet($offset) {
-        return $this->__get(Str::camel($offset));
-    }
-
-    public function offsetSet($offset, $value) {
-        $this->__set(Str::camel($offset), $value);
-    }
-
-    public function offsetUnset($offset) {
-        $offset = Str::camel($offset);
-        unset($this->$offset);
-    }
-
-    public function jsonSerialize(): array {
-        return $this->data;
     }
 
     public function validate() {
