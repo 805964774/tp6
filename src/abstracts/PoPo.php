@@ -4,7 +4,6 @@
 namespace ChengYi\abstracts;
 
 
-use JsonSerializable;
 use ReflectionClass;
 use ReflectionProperty;
 use think\contract\Arrayable;
