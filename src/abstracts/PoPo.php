@@ -29,7 +29,7 @@ abstract class PoPo implements Arrayable
             $inputData = $param;
         }
         $class = new ReflectionClass($this);
-        $properties = $class->getProperties(ReflectionProperty::IS_PROTECTED);
+        $properties = $class->getProperties(ReflectionProperty::IS_PRIVATE);
         foreach ($properties as $property) {
             $propertySnakeName = Str::snake($property->getName());
             if ($property->isPrivate() && isset($inputData[$propertySnakeName])) {
