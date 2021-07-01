@@ -18,4 +18,6 @@ class ErrorNums
     const TOO_MANY_REQUEST = 3;
     // 目录不存在
     const DIRECTORY_NOT_EXISTS = 4;
+    // 类不存在
+    const CLASS_NOT_EXISTS = 5;
 }

@@ -64,12 +64,12 @@ abstract class BaseModel extends Model
                 unset($inputData[$key]);
             }
         }
-        $res = $this->allowField($allowField)->save($inputData);
+        $res = $this->allowField($allowField)->create($inputData);
         if (!$res) {
             throw new ModelException(ErrorNums::ADD_FAIL);
         }
         $pk = $this->getPk();
-        return $this->$pk;
+        return $res->$pk;
     }
 
     /**
