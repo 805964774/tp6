@@ -29,10 +29,10 @@ abstract class PoPo implements Arrayable
             $inputData = $param;
         }
         $class = new ReflectionClass($this);
-        $properties = $class->getProperties(ReflectionProperty::IS_PRIVATE);
+        $properties = $class->getProperties(ReflectionProperty::IS_PROTECTED);
         foreach ($properties as $property) {
             $propertySnakeName = Str::snake($property->getName());
-            if ($property->isPrivate() && isset($inputData[$propertySnakeName])) {
+            if ($property->isProtected() && isset($inputData[$propertySnakeName])) {
                 $propertyValue = $inputData[$propertySnakeName];
                 if (isset($this->dataTypeMap[$propertySnakeName])) {
                     $type = $this->dataTypeMap[$propertySnakeName];
