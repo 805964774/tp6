@@ -17,16 +17,17 @@ use think\Request;
 abstract class PoPo implements Arrayable
 {
     private $data = [];
-    protected $dataTypeMap = [];
+
     protected $validates = [];
+
     protected $autoValidate = true;
+
     /**
      * @var \ReflectionClass
      */
     private $reflectionClass;
 
-    public function __construct(Request $request, $param = [])
-    {
+    public function __construct(Request $request, $param = []) {
         if (empty($param)) {
             $inputData = $request->param();
         } else {
@@ -38,10 +39,6 @@ abstract class PoPo implements Arrayable
             $propertySnakeName = Str::snake($property->getName());
             if ($property->isPrivate() && isset($inputData[$propertySnakeName])) {
                 $propertyValue = $inputData[$propertySnakeName];
-                if (isset($this->dataTypeMap[$propertySnakeName])) {
-                    $type = $this->dataTypeMap[$propertySnakeName];
-                    $propertyValue = $this->typeCast($propertyValue, $type);
-                }
                 $propertyName = $property->getName();
                 $setDataFuncName = 'set' . ucfirst($propertyName);
                 $this->$setDataFuncName($propertyValue);
@@ -52,8 +49,7 @@ abstract class PoPo implements Arrayable
         }
     }
 
-    public function validate()
-    {
+    public function validate() {
         foreach ($this->validates as $validate => $scene) {
             if (is_string($scene)) {
                 validate($validate)->scene($scene)->check($this->toArray());
@@ -65,9 +61,7 @@ abstract class PoPo implements Arrayable
         }
     }
 
-    public function toArray(): array
-    {
-
+    public function toArray(): array {
         $properties = $this->reflectionClass->getProperties(ReflectionProperty::IS_PRIVATE);
         foreach ($properties as $property) {
             $propertyName = $property->getName();
@@ -75,43 +69,5 @@ abstract class PoPo implements Arrayable
             $this->data[Str::snake($propertyName)] = $this->$getDataFuncName();
         }
         return $this->data;
-    }
-
-    /**
-     * 强制类型转换
-     * @access public
-     * @param mixed $data
-     * @param string $type
-     * @return mixed
-     */
-    private function typeCast($data, string $type)
-    {
-        switch (strtolower($type)) {
-            // 数组
-            case 'array':
-                $data = (array)$data;
-                break;
-            // 数字
-            case 'int':
-                $data = (int)$data;
-                break;
-            // 浮点
-            case 'float':
-                $data = (float)$data;
-                break;
-            // 布尔
-            case 'bool':
-                $data = (boolean)$data;
-                break;
-            // 字符串
-            case 'string':
-                if (is_scalar($data)) {
-                    $data = (string)$data;
-                } else {
-                    throw new \InvalidArgumentException('variable type error：' . gettype($data));
-                }
-                break;
-        }
-        return $data;
     }
 }
