@@ -33,19 +33,20 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * 获取所有
-     * @param $where
-     * @param array $field
-     * @return Collection
-     * @throws DataNotFoundException
-     * @throws DbException
-     * @throws ModelNotFoundException
+     * 不分页查询所有
+     * @param array $where 查询条件
+     * @param array $field 查询的字段
+     * @param array $order 排序
+     * @return \think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function getAll($where, array $field = []): Collection {
+    public function getAll(array $where, array $field = [], array $order = []): Collection {
         if (empty($field)) {
             $field = $this->getListField;
         }
-        return $this->field($field)->where($where)->select();
+        return $this->field($field)->where($where)->order($order)->select();
     }
 
     /**
@@ -73,15 +74,31 @@ abstract class BaseModel extends Model
     }
 
     /**
-     * 获取单条数据by id
-     * @param $id
-     * @param array $field
-     * @return array|Model
+     * 获取单条数据by 主键
+     * @param int $id 查询的主键
+     * @param array $field 查询字段
+     * @return array|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
      */
-    public function read($id, array $field = []) {
-        $where['id'] = $id;
+    public function read(int $id, array $field = []) {
+        $where[$this->getPk()] = $id;
+        return $this->getOneData($where, $field);
+    }
+
+    /**
+     * 获取单条数据
+     * @param array $where 查询条件
+     * @param array $field 查询字段
+     * @return array|\think\Model|null
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function getOneData(array $where, array $field = []) {
         $field = empty($field) ? $this->getDataField : $field;
-        return $this->field($field)->where($where)->findOrFail();
+        return $this->field($field)->where($where)->find();
     }
 
     /**
