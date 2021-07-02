@@ -7,9 +7,7 @@ namespace ChengYi\abstracts;
 use ChengYi\constant\ErrorNums;
 use ChengYi\exception\ModelException;
 use think\Collection;
-use think\db\exception\DataNotFoundException;
 use think\db\exception\DbException;
-use think\db\exception\ModelNotFoundException;
 use think\Model;
 use think\Paginator;
 
