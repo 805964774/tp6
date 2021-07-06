@@ -13,10 +13,31 @@ use think\Paginator;
 
 abstract class BaseModel extends Model
 {
+    /**
+     * @var array 获取列表字段
+     */
     protected $getListField;
+    /**
+     * @var array 添加被允许的字段
+     */
     protected $addAllowField;
+    /**
+     * @var array 获取单条数据的字段
+     */
     protected $getDataField;
+    /**
+     * @var array 编辑被允许的字段
+     */
     protected $editAllowField;
+    /**
+     * @var array 翻页配置
+     */
+    private $pageConf = [
+        'query'     => [], //url额外参数
+        'fragment'  => '', //url锚点
+        'var_page'  => 'current_page', //分页变量
+        'list_rows' => 15, //每页数量
+    ];
 
     /**
      * 获取列表
@@ -24,10 +45,19 @@ abstract class BaseModel extends Model
      * @param array $where
      * @param array $order
      * @return Paginator
-     * @throws DbException
+     * @throws \think\db\exception\DbException
      */
     public function getList(int $pageNum = 10, array $where = [], array $order = []): Paginator {
-        return $this->field($this->getListField)->where($where)->order($order)->paginate($pageNum);
+        $this->pageConf['list_rows'] = $pageNum;
+        return $this->field($this->getListField)->where($where)->order($order)->paginate($this->pageConf);
+    }
+
+    /**
+     * 设置翻页配置
+     * @param array $conf 翻页配置
+     */
+    public function setPageConf(array $conf) {
+        $this->pageConf = $conf;
     }
 
     /**
