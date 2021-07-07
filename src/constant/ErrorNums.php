@@ -20,4 +20,8 @@ class ErrorNums
     const DIRECTORY_NOT_EXISTS = 4;
     // 类不存在
     const CLASS_NOT_EXISTS = 5;
+    // 方法不存在
+    const METHOD_NOT_EXISTS = 6;
+    // 方法非共有
+    const METHOD_NOT_PUBLIC = 7;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace ChengYi\abstracts;
 
 
+use ChengYi\constant\ErrorNums;
 use ChengYi\exception\PoPoException;
 use ReflectionClass;
 use ReflectionProperty;
@@ -92,11 +93,11 @@ abstract class PoPo implements Arrayable
                 $propertyName = $property->getName();
                 $setDataFuncName = 'set' . ucfirst($propertyName);
                 if (!$this->reflectionClass->hasMethod($setDataFuncName)) {
-                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' not exists!');
+                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' not exists!', ErrorNums::METHOD_NOT_EXISTS);
                 }
                 $reflectionMethod = $this->reflectionClass->getMethod($setDataFuncName);
                 if (!$reflectionMethod->isPublic()) {
-                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' is not public!');
+                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' is not public!', ErrorNums::METHOD_NOT_PUBLIC);
                 }
                 $reflectionMethod->invokeArgs($this, [$propertyValue]);
             }
