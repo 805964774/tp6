@@ -81,10 +81,10 @@ abstract class BaseModel extends Model
      * 添加单条数据
      * @param $inputData
      * @param array $allowField
-     * @return int
+     * @return mixed
      * @throws \ChengYi\exception\ModelException
      */
-    public function addOneData($inputData, array $allowField = []): int {
+    public function addOneData($inputData, array $allowField = []) {
         if (empty($allowField)) {
             $allowField = $this->addAllowField;
         }
