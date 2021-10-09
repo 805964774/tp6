@@ -17,25 +17,29 @@ abstract class BaseModel extends Model
      * @var array 获取列表字段
      */
     protected $getListField;
+
     /**
      * @var array 添加被允许的字段
      */
     protected $addAllowField;
+
     /**
      * @var array 获取单条数据的字段
      */
     protected $getDataField;
+
     /**
      * @var array 编辑被允许的字段
      */
     protected $editAllowField;
+
     /**
      * @var array 翻页配置
      */
     private $pageConf = [
-        'query'     => [], //url额外参数
-        'fragment'  => '', //url锚点
-        'var_page'  => 'current_page', //分页变量
+        'query' => [], //url额外参数
+        'fragment' => '', //url锚点
+        'var_page' => 'current_page', //分页变量
         'list_rows' => 15, //每页数量
     ];
 
@@ -47,9 +51,23 @@ abstract class BaseModel extends Model
      * @return Paginator
      * @throws \think\db\exception\DbException
      */
-    public function getList(int $pageNum = 10, array $where = [], array $order = []): Paginator {
+    public function getList(int $pageNum, array $where = [], array $order = []): Paginator {
         $this->pageConf['list_rows'] = $pageNum;
         return $this->field($this->getListField)->where($where)->order($order)->paginate($this->pageConf);
+    }
+
+    /**
+     * 列表检索
+     * @param int $pageNum
+     * @param array $searchField
+     * @param array $searchData
+     * @param array $order
+     * @return \think\Paginator
+     * @throws \think\db\exception\DbException
+     */
+    public function searchList(int $pageNum, array $searchField, array $searchData, array $order = []): Paginator {
+        $this->pageConf['list_rows'] = $pageNum;
+        return $this->field($this->getListField)->withSearch($searchField, $searchData)->order($order)->paginate($this->pageConf);
     }
 
     /**
@@ -150,10 +168,10 @@ abstract class BaseModel extends Model
 
     /**
      * 软删除
-     * @param $id
+     * @param int $id
      * @return bool
      */
-    public function deleteOne($id): bool {
+    public function deleteOne(int $id): bool {
         $this->destroy($id);
         return true;
     }
