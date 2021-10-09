@@ -58,16 +58,17 @@ abstract class BaseModel extends Model
 
     /**
      * 列表检索
-     * @param int $pageNum
-     * @param array $searchField
-     * @param array $searchData
-     * @param array $order
+     * @param int $pageNum 分页数
+     * @param array $where 基本查询条件
+     * @param array $searchField 检索器字段
+     * @param array $searchData 检索器数据
+     * @param array $order 排序
      * @return \think\Paginator
      * @throws \think\db\exception\DbException
      */
-    public function searchList(int $pageNum, array $searchField, array $searchData, array $order = []): Paginator {
+    public function searchList(int $pageNum, array $where = [], array $searchField = [], array $searchData = [], array $order = []): Paginator {
         $this->pageConf['list_rows'] = $pageNum;
-        return $this->field($this->getListField)->withSearch($searchField, $searchData)->order($order)->paginate($this->pageConf);
+        return $this->field($this->getListField)->withSearch($searchField, $searchData)->where($where)->order($order)->paginate($this->pageConf);
     }
 
     /**
