@@ -18,11 +18,25 @@ use think\Request;
  */
 abstract class PoPo implements Arrayable
 {
+    /**
+     * @var array $data 数据
+     */
     private $data = [];
 
+    /**
+     * @var array $validates 验证器
+     */
     protected $validates = [];
 
+    /**
+     * @var bool $autoValidate 自动验证
+     */
     protected $autoValidate = true;
+
+    /**
+     * @var array $notFilterField 无需全局过滤的字段
+     */
+    protected $notFilterField = [];
 
     /**
      * @var \ReflectionClass
@@ -38,7 +52,8 @@ abstract class PoPo implements Arrayable
      */
     public function __construct(Request $request, array $param = []) {
         if (empty($param)) {
-            $inputData = $request->param();
+            $inputData = $request->getInput();
+            $inputData = $this->fitterData(json_decode($inputData, true));
         } else {
             $inputData = $param;
         }
@@ -102,5 +117,21 @@ abstract class PoPo implements Arrayable
                 $reflectionMethod->invokeArgs($this, [$propertyValue]);
             }
         }
+    }
+
+    /**
+     * 数据过滤
+     * @param array $params
+     * @return array
+     */
+    public function fitterData(array $params): array {
+        foreach ($params as $paramKey => $paramValue) {
+            if (!in_array($paramKey, $this->notFilterField)) {
+                $filters = app()->request->filter();
+                $param = app()->request->only([$paramKey], [$paramValue]);
+                $params[$paramKey] = $param[$paramKey];
+            }
+        }
+        return $params;
     }
 }
