@@ -53,7 +53,7 @@ abstract class PoPo implements Arrayable
     public function __construct(Request $request, array $param = []) {
         if (empty($param)) {
             $inputData = $request->getInput();
-            $inputData = $this->fitterData(json_decode($inputData, true));
+            $inputData = $this->fitterData(json_decode($inputData, true) ?? []);
         } else {
             $inputData = $param;
         }
@@ -108,11 +108,11 @@ abstract class PoPo implements Arrayable
                 $propertyName = $property->getName();
                 $setDataFuncName = 'set' . ucfirst($propertyName);
                 if (!$this->reflectionClass->hasMethod($setDataFuncName)) {
-                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' not exists!', ErrorNums::METHOD_NOT_EXISTS);
+                    throw new PoPoException('method ' . $this->reflectionClass->getName() . '::' . $setDataFuncName . ' not exists!', ErrorNums::METHOD_NOT_EXISTS);
                 }
                 $reflectionMethod = $this->reflectionClass->getMethod($setDataFuncName);
                 if (!$reflectionMethod->isPublic()) {
-                    throw new PoPoException('method '.$this->reflectionClass->getName() . '::' . $setDataFuncName . ' is not public!', ErrorNums::METHOD_NOT_PUBLIC);
+                    throw new PoPoException('method ' . $this->reflectionClass->getName() . '::' . $setDataFuncName . ' is not public!', ErrorNums::METHOD_NOT_PUBLIC);
                 }
                 $reflectionMethod->invokeArgs($this, [$propertyValue]);
             }
@@ -127,8 +127,7 @@ abstract class PoPo implements Arrayable
     public function fitterData(array $params): array {
         foreach ($params as $paramKey => $paramValue) {
             if (!in_array($paramKey, $this->notFilterField)) {
-                $filters = app()->request->filter();
-                $param = app()->request->only([$paramKey], [$paramValue]);
+                $param = app()->request->only([$paramKey], [$paramKey => $paramValue]);
                 $params[$paramKey] = $param[$paramKey];
             }
         }
