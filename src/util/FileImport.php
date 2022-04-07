@@ -94,7 +94,11 @@ class FileImport
     private function readFile($filePath): \Generator {
         if ($handle = fopen($filePath, 'r')) {
             while (!feof($handle)) {
-                yield trim(fgets($handle));
+                $content = fgets($handle);
+                if ($content) {
+                    yield trim($content);
+                }
+                continue;
             }
             fclose($handle);
         }
