@@ -99,11 +99,12 @@ class LeakyBucket
      */
     public static function getInstance(string $scene = 'default', array $config = []): LeakyBucket {
         if (!isset(self::$_instances[$scene]) || !self::$_instances[$scene] instanceof LeakyBucket) {
-            if ('default' != $scene && empty($config)) {
-                throw new ChengYiException('非默认场景，需要配置信息');
+            if (empty($config)) {
+                $allConfig = Config::get('rete_limit');
+                $config = $allConfig[$scene] ?? [];
             }
             if (empty($config)) {
-                $config = Config::get('rete_limit');
+                throw new ChengYiException($scene . 'config cannot be empty.');
             }
             self::$_instances[$scene] = new self($config);
         }
