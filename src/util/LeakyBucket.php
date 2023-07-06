@@ -104,7 +104,7 @@ class LeakyBucket
                 $config = $allConfig[$scene] ?? [];
             }
             if (empty($config)) {
-                throw new ChengYiException($scene . 'config cannot be empty.');
+                throw new ChengYiException('rete_limit scence['. $scene . '] config cannot be empty.');
             }
             self::$_instances[$scene] = new self($config);
         }
